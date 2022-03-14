@@ -10,7 +10,8 @@
 
 - Drawdown Graph
 - Drawdown Average Line
-- Longest Drawdown days TOP5 Area
+- Longest Drawdown days TOP5 Area  
+
 ![Untitled](https://user-images.githubusercontent.com/19174106/158088111-ea684ab6-8e1b-4884-a0b8-5d540e6940b3.png)
 
 
@@ -20,7 +21,8 @@
 - DD Point day
 - DD End day
 - DD days
-- DD ratio
+- DD ratio  
+
 ![image](https://user-images.githubusercontent.com/19174106/158088080-97938bec-f858-4b8a-9343-31744adff5d8.png)
 
 
