@@ -25,6 +25,7 @@ class drawdown_calculation:
         # 종료 날짜 추출.
         ends = no_dd & (~no_dd).shift(1)
         ends = list(ends[ends].index)
+
         # no drawdown :)
         if not starts:
             return _pd.DataFrame(
@@ -69,20 +70,32 @@ if __name__ == '__main__':
 
     DC = drawdown_calculation(df)
 
-    assets = ["KOSPI", "KOSDAQ", "PORT_ASSET"]
+    dd = {}
+    dddf = {}
+
+    assets = ["PORT_ASSET", "KOSPI", "KOSDAQ"]
 
     for asset in assets:
         # price series data
         prices = df[asset]
 
         # Drawdown 계산.
-        dd = DC.to_drawdown_series(prices)
+        dd[asset] = DC.to_drawdown_series(prices)
 
         # Drawdown 상세 결과 테이블 생성.
-        dddf = DC.drawdown_details(dd)
+        dddf[asset] = DC.drawdown_details(dd[asset])
 
-        # DD ratio 정렬.
-        print(dddf.sort_values(by='max drawdown', ascending=True, kind='mergesort'))
+    relative = ["PORT-KOSPI", "PORT-KOSDAQ"]
+    for idx in range(len(assets) - 1):
+        # PORT - Benchmark DD
+        dd[relative[idx]] = dd[assets[0]] - dd[assets[idx + 1]]
+        dd[relative[idx]] = dd[relative[idx]].where(dd[relative[idx]] < 0, 0)
+        dddf[relative[idx]] = DC.drawdown_details(dd[relative[idx]])
 
-        # DD days 정렬.
-        print(dddf.sort_values(by='days', ascending=True, kind='mergesort'))
+    for item in (assets + relative):
+        print(f"{'=' * 25}{item}{'=' * 25}")
+        print("Worst Drawdown Ratio Top10 Table")
+        print(dddf[item].sort_values(by='max drawdown', ascending=True, kind='mergesort').head(10))
+        print("Longest Drawdown days TOP5 Area")
+        print(dddf[item].sort_values(by='days', ascending=False, kind='mergesort').head(5))
+        print("=" * 60)
